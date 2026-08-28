@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Malbolge Adder</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:#0b0c10;color:#f4f4f5;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+main{width:min(680px,92vw);padding:30px;border:1px solid #333;background:#14151a;border-radius:18px;box-shadow:0 20px 70px #0008}
+h1{margin-top:0;font-size:34px}.row{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center}
+input,button{font:inherit;border:1px solid #444;border-radius:10px;background:#202127;color:#fff;padding:14px}
+input{width:100%;font-size:22px}button{width:100%;margin-top:15px;font-size:20px;cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}
+#result{font-size:32px;margin:24px 0 8px;min-height:40px}.muted{color:#aaa;font-size:13px;line-height:1.5}.ok{color:#9fe6a0}.bad{color:#ff9c9c}
+</style>
+</head><body><main>
+<h1>Malbolge Adder 👹</h1>
+<p id="status">Loading <code>adder.mal</code>…</p>
+<div class="row"><input id="a" type="number" min="0" max="999" step="1" value="123"><b>+</b><input id="b" type="number" min="0" max="999" step="1" value="456"></div>
+<button id="add" disabled>RUN MALBOLGE</button>
+<div id="result">—</div>
+<p class="muted">The JavaScript file is only the Malbolge virtual machine. The addition algorithm comes from <code>adder.mal</code>. Delete or rename <code>adder.mal</code> and this page cannot add.</p>
+</main>
+<script src="./malbolge.js"></script>
+<script>
+let source=null;
+const status=document.querySelector("#status"), btn=document.querySelector("#add"), result=document.querySelector("#result");
+fetch("./adder.mal",{cache:"no-store"}).then(r=>{if(!r.ok)throw Error("adder.mal missing");return r.text()}).then(t=>{
+ source=t; status.textContent="adder.mal loaded ✓";status.className="ok";btn.disabled=false;
+}).catch(e=>{status.textContent="DEPENDENCY ERROR: "+e.message;status.className="bad"});
+btn.onclick=()=>{
+ const a=Number(document.querySelector("#a").value),b=Number(document.querySelector("#b").value);
+ if(!Number.isInteger(a)||!Number.isInteger(b)||a<0||a>999||b<0||b>999){result.textContent="Use integers 0–999";return}
+ btn.disabled=true; result.textContent="Malbolge is thinking…";
+ setTimeout(()=>{
+   try{
+     // The classic adder expects decimal A and B separated by a space.
+     const raw=runMalbolge(source,`${a} ${b}\n`);
+     result.textContent=raw.replace(/[^\x20-\x7E\r\n]/g,"").trim() || "(no output)";
+   }catch(e){result.textContent="VM ERROR: "+e.message}
+   btn.disabled=false;
+ },20);
+};
+</script></body></html>
