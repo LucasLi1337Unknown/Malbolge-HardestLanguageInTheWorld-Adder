@@ -1,14 +1,27 @@
-# Malbolge Calculator Lab
+# Malbolge Adder
 
-This ZIP is GitHub-Pages-ready and **really depends on `calculator.mal` at load time**:
-delete/rename the file and the UI refuses to calculate.
+A GitHub Pages front end for a real Malbolge addition program.
 
-However, this is NOT falsely advertised as a finished Malbolge arithmetic engine.
-`calculator.mal` is currently a real Malbolge program (Hello World), while the four
-arithmetic buttons are temporary JavaScript arithmetic.
+## Files
 
-Why: a browser can run a Malbolge VM, but we still need genuine standard-Malbolge
-programs implementing subtraction, multiplication, division, input parsing and
-operation dispatch. I did not invent fake punctuation and call it Malbolge.
+- `index.html` — UI. Fetches `adder.mal` and sends the two inputs to the VM.
+- `malbolge.js` — browser implementation of the original Malbolge virtual machine.
+- `adder.mal` — the real Malbolge adder source supplied for this project.
 
-Files are all at repository root for GitHub Pages.
+## Input
+
+Enter two integers from **0 to 999** and press **RUN MALBOLGE**.
+
+The HTML/JavaScript does **not** calculate `A + B`. JavaScript only implements the
+Malbolge interpreter. The arithmetic algorithm lives in `adder.mal`.
+
+## Dependency test
+
+Rename or delete `adder.mal` and reload the page. The RUN button remains disabled,
+proving the page depends on the Malbolge source.
+
+## GitHub Pages
+
+Put all three files at the repository root, enable GitHub Pages for the main branch,
+and open the Pages URL. Opening `index.html` directly with `file://` may block `fetch`,
+so serve it over HTTP/GitHub Pages.
