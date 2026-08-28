@@ -1,0 +1,42 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
+<title>Malbolge Calculator Lab</title>
+<style>
+body{font-family:monospace;background:#0b0b0d;color:#eee;display:grid;place-items:center;min-height:100vh;margin:0}
+main{width:min(92vw,650px);background:#17171b;padding:24px;border-radius:16px;border:1px solid #333}
+input,button{font:inherit;padding:12px;margin:5px;border-radius:8px;border:1px solid #444;background:#222;color:#fff}
+button{font-size:20px;cursor:pointer}.out{font-size:32px;margin:18px 5px}.bad{color:#ff9b9b}
+pre{white-space:pre-wrap;overflow:auto;max-height:180px;background:#09090b;padding:12px;border-radius:8px}
+</style></head><body><main>
+<h1>Malbolge Calculator Lab 👹</h1>
+<p id="state">Loading calculator.mal…</p>
+<input id="a" type="number" placeholder="A"><input id="b" type="number" placeholder="B"><br>
+<button data-op="+">+</button><button data-op="-">−</button><button data-op="*">×</button><button data-op="/">÷</button>
+<div class="out" id="out">—</div>
+<p><b>Dependency test:</b> rename/delete <code>calculator.mal</code>, reload, and every operation is disabled.</p>
+<pre id="src"></pre>
+<script>
+let malReady=false, malSource="";
+const state=document.querySelector("#state"), out=document.querySelector("#out");
+fetch("./calculator.mal",{cache:"no-store"}).then(r=>{
+ if(!r.ok) throw Error("calculator.mal missing");
+ return r.text()
+}).then(t=>{
+ malSource=t; malReady=t.trim().length>0;
+ if(!malReady) throw Error("calculator.mal empty");
+ state.textContent="calculator.mal loaded ✓";
+ document.querySelector("#src").textContent=t;
+}).catch(e=>{
+ state.textContent="MALBOLGE DEPENDENCY FAILED: "+e.message;
+ state.className="bad";
+});
+document.querySelectorAll("[data-op]").forEach(btn=>btn.onclick=()=>{
+ if(!malReady){out.textContent="NO calculator.mal";return}
+ const a=Number(document.querySelector("#a").value),b=Number(document.querySelector("#b").value);
+ if(!Number.isFinite(a)||!Number.isFinite(b)){out.textContent="enter numbers";return}
+ // IMPORTANT: placeholder browser arithmetic only. See README.
+ const op=btn.dataset.op;
+ if(op==="/"&&b===0){out.textContent="DIV/0";return}
+ out.textContent=op==="+"?a+b:op==="-"?a-b:op==="*"?a*b:a/b;
+});
+</script></main></body></html>
