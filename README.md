@@ -25,3 +25,15 @@ proving the page depends on the Malbolge source.
 Put all three files at the repository root, enable GitHub Pages for the main branch,
 and open the Pages URL. Opening `index.html` directly with `file://` may block `fetch`,
 so serve it over HTTP/GitHub Pages.
+
+
+## Verified examples
+
+- `1 + 2` -> `3`
+- `123 + 456` -> `579`
+- `999 + 999` -> `1998`
+- `0 + 0` -> `0`
+
+The VM was corrected to post-cipher `mem[c]` after instruction execution, matching
+the original Malbolge interpreter. This matters for the `i` instruction because it
+can change `c` before the self-modification step.
